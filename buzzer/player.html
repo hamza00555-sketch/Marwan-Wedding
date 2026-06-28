@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>الباصرة — لاعب</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
+      background: #11151c;
+      color: #eef1f5;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+    .screen { display: none; flex: 1; flex-direction: column; padding: 20px; }
+    .screen.active { display: flex; }
+
+    /* شاشة الانضمام */
+    #join { justify-content: center; align-items: center; gap: 16px; text-align: center; }
+    #join h1 { font-size: 26px; }
+    #join input {
+      width: 100%; max-width: 320px; padding: 14px; font-size: 20px; text-align: center;
+      border-radius: 12px; border: 2px solid #2a3340; background: #1b212b; color: #fff;
+    }
+    #join input#code { letter-spacing: 6px; text-transform: uppercase; font-weight: 700; }
+    #join button {
+      width: 100%; max-width: 320px; padding: 16px; font-size: 20px; font-weight: 700;
+      border: none; border-radius: 12px; background: #2f80ed; color: #fff; cursor: pointer;
+    }
+    #joinError { color: #ff6b6b; min-height: 22px; font-size: 15px; }
+
+    /* شاشة اللعب */
+    #play { gap: 14px; }
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      font-size: 15px; color: #9aa7b8;
+    }
+    .topbar b { color: #eef1f5; }
+    .question {
+      background: #1b212b; border: 1px solid #2a3340; border-radius: 12px;
+      padding: 16px; font-size: 19px; min-height: 60px; line-height: 1.5;
+      display: flex; align-items: center; justify-content: center; text-align: center;
+    }
+    .question.empty { color: #6b7787; font-size: 15px; }
+    .buzz-wrap { flex: 1; display: flex; align-items: center; justify-content: center; }
+    #buzz {
+      width: min(78vw, 320px); height: min(78vw, 320px); border-radius: 50%;
+      border: none; font-size: 30px; font-weight: 800; color: #fff; cursor: pointer;
+      background: #3a4250; box-shadow: 0 10px 0 #20242c; transition: transform .05s, box-shadow .05s;
+      touch-action: manipulation;
+    }
+    #buzz.armed { background: radial-gradient(circle at 50% 35%, #ff5b6e, #c81d3a); box-shadow: 0 10px 0 #7e1023; animation: pulse 1s infinite; }
+    #buzz.pressed { transform: translateY(8px); box-shadow: 0 2px 0 #20242c; }
+    #buzz:disabled { opacity: .85; }
+    @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+    .status { text-align: center; font-size: 20px; font-weight: 700; min-height: 28px; }
+    .rank-badge { font-size: 44px; font-weight: 900; color: #ffcf33; }
+  </style>
+</head>
+<body>
+  <section id="join" class="screen active">
+    <h1>🔔 الباصرة</h1>
+    <input id="name" type="text" placeholder="اسمك" maxlength="20" autocomplete="off">
+    <input id="code" type="text" placeholder="كود الغرفة" maxlength="4" autocomplete="off">
+    <button id="joinBtn">ادخل</button>
+    <div id="joinError"></div>
+  </section>
+
+  <section id="play" class="screen">
+    <div class="topbar">
+      <span>غرفة <b id="roomCode"></b></span>
+      <span><b id="myName"></b></span>
+      <span>نقاطك <b id="myScore">0</b></span>
+    </div>
+    <div id="question" class="question empty">في انتظار السؤال…</div>
+    <div class="buzz-wrap">
+      <button id="buzz" disabled>استنى…</button>
+    </div>
+    <div id="status" class="status"></div>
+  </section>
+
+  <script type="module" src="js/player.js"></script>
+</body>
+</html>

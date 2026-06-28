@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>الباصرة — مضيف</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
+      background: #11151c; color: #eef1f5; min-height: 100vh; padding: 16px;
+    }
+    .screen { display: none; max-width: 760px; margin: 0 auto; }
+    .screen.active { display: block; }
+
+    #start { text-align: center; padding-top: 18vh; }
+    #start h1 { font-size: 30px; margin-bottom: 10px; }
+    #start p { color: #9aa7b8; margin-bottom: 24px; }
+    .btn {
+      border: none; border-radius: 12px; padding: 14px 22px; font-size: 18px; font-weight: 700;
+      cursor: pointer; color: #fff;
+    }
+    .btn-primary { background: #2f80ed; }
+    .btn-danger { background: #c81d3a; }
+    .btn-green { background: #27ae60; }
+    .btn-ghost { background: #2a3340; }
+    .btn:disabled { opacity: .5; cursor: default; }
+
+    .codebar {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      background: #1b212b; border: 1px solid #2a3340; border-radius: 12px; padding: 12px 16px; margin-bottom: 14px;
+    }
+    .codebar .code { font-size: 34px; font-weight: 900; letter-spacing: 8px; color: #ffcf33; }
+    .codebar .hint { color: #9aa7b8; font-size: 14px; }
+
+    .card { background: #1b212b; border: 1px solid #2a3340; border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+    .card h3 { font-size: 15px; color: #9aa7b8; margin-bottom: 10px; font-weight: 600; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+    textarea {
+      width: 100%; min-height: 56px; resize: vertical; padding: 12px; font-size: 17px; font-family: inherit;
+      border-radius: 10px; border: 2px solid #2a3340; background: #11151c; color: #fff; margin-bottom: 10px;
+    }
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .controls .btn { flex: 1; min-width: 140px; }
+
+    ul { list-style: none; }
+    .rank-item, .player-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 8px; border-bottom: 1px solid #232b36;
+    }
+    .rank-item:last-child, .player-item:last-child { border-bottom: none; }
+    .rank-num { font-weight: 900; font-size: 20px; width: 30px; text-align: center; }
+    .rank-1 .rank-num { color: #ffcf33; }
+    .rank-name { flex: 1; font-size: 17px; }
+    .rank-delta { color: #9aa7b8; font-size: 14px; }
+    .score-val { font-weight: 800; font-size: 18px; width: 40px; text-align: center; }
+    .mini { padding: 6px 12px; font-size: 16px; border-radius: 8px; }
+    .empty-note { color: #6b7787; font-size: 14px; padding: 8px; }
+  </style>
+</head>
+<body>
+  <section id="start" class="screen active">
+    <h1>🔔 باصرة المسابقات</h1>
+    <p>أنشئ غرفة وشارك الكود مع اللاعبين</p>
+    <button id="createBtn" class="btn btn-primary">أنشئ غرفة</button>
+  </section>
+
+  <section id="host" class="screen">
+    <div class="codebar">
+      <div>
+        <div class="code" id="roomCode">----</div>
+        <div class="hint">اللاعبون يدخلون من <b>player.html</b> بالكود ده</div>
+      </div>
+      <div class="hint">اللاعبون: <b id="playerCount">0</b></div>
+    </div>
+
+    <div class="card">
+      <h3>السؤال</h3>
+      <textarea id="question" placeholder="اكتب السؤال هنا…"></textarea>
+      <button id="sendQuestion" class="btn btn-ghost mini">اعرض السؤال للاعبين</button>
+    </div>
+
+    <div class="controls">
+      <button id="armBtn" class="btn btn-green">جهّز الباصرة (جولة جديدة)</button>
+      <button id="lockBtn" class="btn btn-danger">اقفل الباصرة</button>
+    </div>
+
+    <div class="card">
+      <h3>ترتيب الضغط — الجولة <span id="roundNum">0</span></h3>
+      <ul id="ranking"><li class="empty-note">لسه محدش ضغط</li></ul>
+    </div>
+
+    <div class="card">
+      <h3>النقاط</h3>
+      <ul id="players"><li class="empty-note">في انتظار اللاعبين…</li></ul>
+    </div>
+  </section>
+
+  <script type="module" src="js/host.js"></script>
+</body>
+</html>
