@@ -1,15 +1,16 @@
 import {
   GAME_WIDTH, GROUND_Y,
-  OBSTACLE_TYPES, SPAWN_MIN_MS, SPAWN_MAX_MS
+  OBSTACLE_TYPES, SPAWN_MIN_MS, SPAWN_MAX_MS, DEPTH
 } from '../constants.js';
 
 // height, yOffset (negative = above ground), hitbox shrink factor
+// (sized to match the 188px-tall character)
 const CFG = {
-  relative: { w: 78,  h: 98,  yOff: 0,    hx: 0.75 },
-  bills:    { w: 64,  h: 54,  yOff: -155, hx: 0.80 },  // mid-air, bobs
-  gossip:   { w: 88,  h: 108, yOff: 0,    hx: 0.72 },
-  traffic:  { w: 108, h: 118, yOff: 0,    hx: 0.78 },
-  crowd:    { w: 132, h: 98,  yOff: 0,    hx: 0.70 },
+  relative: { w: 90,  h: 112, yOff: 0,    hx: 0.75 },
+  bills:    { w: 74,  h: 62,  yOff: -175, hx: 0.80 },  // mid-air, bobs
+  gossip:   { w: 100, h: 122, yOff: 0,    hx: 0.72 },
+  traffic:  { w: 122, h: 134, yOff: 0,    hx: 0.78 },
+  crowd:    { w: 150, h: 112, yOff: 0,    hx: 0.70 },
 };
 
 export default class ObstacleManager {
@@ -57,6 +58,7 @@ export default class ObstacleManager {
 
     const obs = this.group.create(x, y, `obstacle-${type}`);
     obs.setDisplaySize(cfg.w, cfg.h);
+    obs.setDepth(DEPTH.WORLD);
     obs.body.allowGravity = false;
     obs.setImmovable(true);
     obs.body.setSize(cfg.w * cfg.hx, cfg.h * 0.88);

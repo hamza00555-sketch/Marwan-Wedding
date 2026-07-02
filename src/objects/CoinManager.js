@@ -1,11 +1,11 @@
 import {
   GAME_WIDTH, GROUND_Y,
   COIN_SPAWN_MIN_MS, COIN_SPAWN_MAX_MS,
-  BIG_COIN_VALUE, MAGNET_RADIUS
+  BIG_COIN_VALUE, MAGNET_RADIUS, DEPTH
 } from '../constants.js';
 
 // Y offsets above GROUND_Y for different coin heights
-const HEIGHTS = [-55, -155, -270, -380];
+const HEIGHTS = [-60, -170, -290, -400];
 
 export default class CoinManager {
   constructor(scene) {
@@ -47,7 +47,7 @@ export default class CoinManager {
         GROUND_Y + Phaser.Utils.Array.GetRandom(HEIGHTS));
     } else if (roll < 6) {
       // arc of 3 coins at ascending heights
-      [-80, -190, -300].forEach((yOff, i) => {
+      [-90, -210, -330].forEach((yOff, i) => {
         this.scene.time.delayedCall(i * 90, () => {
           if (this.active) this._placeCoin(GAME_WIDTH + 60, GROUND_Y + yOff);
         });
@@ -56,13 +56,13 @@ export default class CoinManager {
       // straight row of 5 at one height
       const y = GROUND_Y + Phaser.Utils.Array.GetRandom(HEIGHTS.slice(0, 3));
       for (let i = 0; i < 5; i++) {
-        this._placeCoin(GAME_WIDTH + 60 + i * 58, y);
+        this._placeCoin(GAME_WIDTH + 60 + i * 64, y);
       }
     } else {
       // zig-zag of 6 — rewards double-jump rhythm
       for (let i = 0; i < 6; i++) {
-        const y = GROUND_Y + (i % 2 === 0 ? -90 : -280);
-        this._placeCoin(GAME_WIDTH + 60 + i * 78, y);
+        const y = GROUND_Y + (i % 2 === 0 ? -100 : -300);
+        this._placeCoin(GAME_WIDTH + 60 + i * 88, y);
       }
     }
   }
@@ -85,8 +85,9 @@ export default class CoinManager {
 
   _placeCoin(x, y, big = false) {
     const coin = this.group.create(x, y, big ? 'coin-big' : 'coin');
-    const size = big ? 52 : 36;
+    const size = big ? 58 : 40;
     coin.setDisplaySize(size, size);
+    coin.setDepth(DEPTH.WORLD);
     coin.body.allowGravity = false;
     coin.setImmovable(true);
     coin.body.setSize(size - 6, size - 6);

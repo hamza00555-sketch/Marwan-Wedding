@@ -1,6 +1,6 @@
 import {
   GAME_WIDTH, GROUND_Y,
-  POWERUP_TYPES, POWERUP_SPAWN_MIN_MS, POWERUP_SPAWN_MAX_MS
+  POWERUP_TYPES, POWERUP_SPAWN_MIN_MS, POWERUP_SPAWN_MAX_MS, DEPTH
 } from '../constants.js';
 
 export default class PowerUpManager {
@@ -32,19 +32,20 @@ export default class PowerUpManager {
 
   _spawn() {
     const type = Phaser.Utils.Array.GetRandom(POWERUP_TYPES);
-    const y    = GROUND_Y + Phaser.Math.Between(-320, -120);
+    const y    = GROUND_Y + Phaser.Math.Between(-340, -130);
 
     const p = this.group.create(GAME_WIDTH + 70, y, `powerup-${type}`);
-    p.setDisplaySize(48, 48);
+    p.setDisplaySize(52, 52);
+    p.setDepth(DEPTH.WORLD);
     p.body.allowGravity = false;
     p.setImmovable(true);
-    p.body.setSize(46, 46);
+    p.body.setSize(50, 50);
     p.powerType = type;
 
     // glow ring behind the icon
-    p.ring = this.scene.add.circle(p.x, p.y, 34)
+    p.ring = this.scene.add.circle(p.x, p.y, 37)
       .setStrokeStyle(4, 0xffe066, 0.85)
-      .setDepth(p.depth - 1);
+      .setDepth(DEPTH.WORLD - 1);
     this.scene.tweens.add({
       targets: p.ring, scale: 1.25, alpha: 0.3,
       duration: 520, yoyo: true, repeat: -1, ease: 'Sine.easeInOut'

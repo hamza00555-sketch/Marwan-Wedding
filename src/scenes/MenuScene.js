@@ -37,7 +37,7 @@ export default class MenuScene extends Phaser.Scene {
     }
 
     // Player preview sprite
-    const preview = this.add.sprite(GAME_WIDTH / 2, 360, 'marwan-run').setScale(1.3);
+    const preview = this.add.sprite(GAME_WIDTH / 2, 360, 'marwan-run').setScale(1.05);
     if (this.anims.exists('player-run')) preview.play('player-run');
 
     // Start button

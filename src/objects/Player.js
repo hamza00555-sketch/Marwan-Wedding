@@ -1,23 +1,24 @@
 import {
-  GROUND_Y,
+  GROUND_Y, CHAR_FRAME_H,
+  BODY_W, BODY_H, BODY_OFF_X, BODY_OFF_Y,
   JUMP_VELOCITY, JUMP2_VELOCITY,
-  LIVES_MAX
+  LIVES_MAX, DEPTH
 } from '../constants.js';
 import audio from './AudioEngine.js';
 
 // Where the sprite centre rests so the feet touch GROUND_Y
-// (body offset 12 + body height 126 - half display height 75 = 63)
-const REST_Y = GROUND_Y - 63;
+const REST_Y = GROUND_Y - (BODY_OFF_Y + BODY_H - CHAR_FRAME_H / 2);
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y) {
     super(scene, x, y, 'marwan-run');
     scene.add.existing(this);
     scene.physics.add.existing(this);
+    this.setDepth(DEPTH.PLAYER);
 
-    this.body.setSize(58, 126);
-    this.body.setOffset(27, 12);
-    this.body.setMaxVelocityY(900);
+    this.body.setSize(BODY_W, BODY_H);
+    this.body.setOffset(BODY_OFF_X, BODY_OFF_Y);
+    this.body.setMaxVelocityY(950);
 
     this.jumpsLeft  = 0;
     this.invincible = false;
@@ -27,10 +28,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this._wasAir    = false;
 
     // shield aura that follows the player
-    this.aura = scene.add.circle(x, y, 62)
+    this.aura = scene.add.circle(x, y, 78)
       .setStrokeStyle(5, 0x66aaff, 0.9)
       .setFillStyle(0x66aaff, 0.10)
-      .setDepth(this.depth + 1)
+      .setDepth(DEPTH.PLAYER + 1)
       .setVisible(false);
 
     this.play('player-run');
@@ -128,7 +129,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           duration: 70, yoyo: true,
           onComplete: () => this.setScale(1)
         });
-        this.scene.events.emit('player-land', this.x, this.y + 62);
+        this.scene.events.emit('player-land', this.x, this.y + BODY_H / 2);
       }
     } else {
       // lean into the jump / dive

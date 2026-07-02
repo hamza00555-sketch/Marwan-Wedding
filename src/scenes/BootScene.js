@@ -29,11 +29,12 @@ export default class BootScene extends Phaser.Scene {
       'assets/images/marwan-jump.png',
       { frameWidth: CHAR_FRAME_W, frameHeight: CHAR_FRAME_H });
 
-    // ── backgrounds ───────────────────────────────────────────────────────
-    this.load.image('bg-sky',    'assets/images/bg-sky.png');
-    this.load.image('bg-shops',  'assets/images/bg-shops.png');
-    this.load.image('bg-street', 'assets/images/bg-street.png');
-    this.load.image('bg-front',  'assets/images/bg-front.png');
+    // ── map layers (back to front) ────────────────────────────────────────
+    this.load.image('bg-sky-day',    'assets/images/bg-sky-day.png');
+    this.load.image('bg-sky-sunset', 'assets/images/bg-sky-sunset.png');
+    this.load.image('bg-buildings',  'assets/images/bg-buildings.png');
+    this.load.image('bg-wedding',    'assets/images/bg-wedding.png');
+    this.load.image('bg-sidewalk',   'assets/images/bg-sidewalk.png');
 
     // ── obstacles ─────────────────────────────────────────────────────────
     OBSTACLE_TYPES.forEach(t =>
@@ -65,6 +66,37 @@ export default class BootScene extends Phaser.Scene {
     this.scene.start('MenuScene');
   }
 
+  _createAnimations() {
+    const a = this.anims;
+
+    if (!a.exists('player-run')) {
+      a.create({
+        key: 'player-run',
+        frames: a.generateFrameNumbers('marwan-run', { start: 0, end: RUN_FRAMES - 1 }),
+        frameRate: 15,   // 8-frame cycle at 15 fps = fast, snappy stride
+        repeat: -1
+      });
+    }
+
+    if (!a.exists('player-jump')) {
+      a.create({
+        key: 'player-jump',
+        frames: a.generateFrameNumbers('marwan-jump', { start: 0, end: JUMP_FRAMES - 1 }),
+        frameRate: 18,
+        repeat: 0   // play once, hold last frame
+      });
+    }
+
+    if (!a.exists('coin-spin')) {
+      a.create({
+        key: 'coin-spin',
+        frames: a.generateFrameNumbers('coin', { start: 0, end: 5 }),
+        frameRate: 10,
+        repeat: -1
+      });
+    }
+  }
+
   // small procedural textures used by the particle emitters
   _createParticleTextures() {
     if (!this.textures.exists('p-dot')) {
@@ -78,44 +110,12 @@ export default class BootScene extends Phaser.Scene {
     if (!this.textures.exists('p-star')) {
       const g = this.make.graphics({ add: false });
       g.fillStyle(0xffffff, 1);
-      // 4-point star (diamond with pinched sides)
       g.fillPoints([
         { x: 7, y: 0 }, { x: 9, y: 5 }, { x: 14, y: 7 }, { x: 9, y: 9 },
         { x: 7, y: 14 }, { x: 5, y: 9 }, { x: 0, y: 7 }, { x: 5, y: 5 }
       ], true);
       g.generateTexture('p-star', 14, 14);
       g.destroy();
-    }
-  }
-
-  _createAnimations() {
-    const a = this.anims;
-
-    if (!a.exists('player-run')) {
-      a.create({
-        key: 'player-run',
-        frames: a.generateFrameNumbers('marwan-run', { start: 0, end: RUN_FRAMES - 1 }),
-        frameRate: 14,
-        repeat: -1
-      });
-    }
-
-    if (!a.exists('player-jump')) {
-      a.create({
-        key: 'player-jump',
-        frames: a.generateFrameNumbers('marwan-jump', { start: 0, end: JUMP_FRAMES - 1 }),
-        frameRate: 22,
-        repeat: 0   // play once, hold last frame
-      });
-    }
-
-    if (!a.exists('coin-spin')) {
-      a.create({
-        key: 'coin-spin',
-        frames: a.generateFrameNumbers('coin', { start: 0, end: 5 }),
-        frameRate: 10,
-        repeat: -1
-      });
     }
   }
 }

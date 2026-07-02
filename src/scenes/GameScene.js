@@ -3,7 +3,7 @@ import {
   INITIAL_SPEED, MAX_SPEED, SPEED_INCREMENT,
   LIVES_MAX, WIN_DISTANCE, MIN_COINS,
   MAGNET_DURATION_MS, COMBO_WINDOW_MS, NEAR_MISS_GAP,
-  HIGHSCORE_KEY
+  HIGHSCORE_KEY, DEPTH
 } from '../constants.js';
 import Player          from '../objects/Player.js';
 import ObstacleManager from '../objects/ObstacleManager.js';
@@ -116,20 +116,37 @@ export default class GameScene extends Phaser.Scene {
   // ── scene construction ────────────────────────────────────────────────────
 
   _buildBackground() {
-    this.bgLayers = [
-      { key: 'bg-sky',    factor: 0.03 },
-      { key: 'bg-shops',  factor: 0.22 },
-      { key: 'bg-street', factor: 0.42 },
-      { key: 'bg-front',  factor: 0.68 },
-    ].map(({ key, factor }) => ({
-      sprite: this.add.tileSprite(0, 0, GAME_WIDTH, GAME_HEIGHT, key).setOrigin(0, 0),
-      factor
-    }));
+    // Sky panorama; the sunset variant crossfades in as the day passes
+    this.skyDay = this.add.tileSprite(0, 0, GAME_WIDTH, GAME_HEIGHT, 'bg-sky-day')
+      .setOrigin(0, 0).setDepth(DEPTH.SKY);
+    this.skySunset = this.add.tileSprite(0, 0, GAME_WIDTH, GAME_HEIGHT, 'bg-sky-sunset')
+      .setOrigin(0, 0).setDepth(DEPTH.SKY_SUNSET).setAlpha(0);
 
-    // warm sunset wash that deepens as the wedding gets closer
+    // Shop fronts at native pixel scale, bases tucked just behind the sidewalk.
+    // The decorated wedding street fades in for the final stretch.
+    const bTop = GROUND_Y + 40 - 724;
+    this.buildings = this.add.tileSprite(0, bTop, GAME_WIDTH, 724, 'bg-buildings')
+      .setOrigin(0, 0).setDepth(DEPTH.BUILDINGS);
+    this.wedding = this.add.tileSprite(0, bTop, GAME_WIDTH, 724, 'bg-wedding')
+      .setOrigin(0, 0).setDepth(DEPTH.WEDDING).setAlpha(0);
+
+    // Sidewalk strip — pavement surface (texture row 369) sits exactly on
+    // GROUND_Y and scrolls at world speed, so obstacles stay glued to it
+    this.sidewalk = this.add.tileSprite(0, GROUND_Y - 369, GAME_WIDTH, 524, 'bg-sidewalk')
+      .setOrigin(0, 0).setDepth(DEPTH.SIDEWALK);
+
+    this.bgLayers = [
+      { sprite: this.skyDay,    factor: 0.03 },
+      { sprite: this.skySunset, factor: 0.03 },
+      { sprite: this.buildings, factor: 0.30 },
+      { sprite: this.wedding,   factor: 0.30 },
+      { sprite: this.sidewalk,  factor: 1.00 },
+    ];
+
+    // warm wash that deepens as the wedding gets closer
     this.sunset = this.add.rectangle(
       GAME_WIDTH / 2, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0xff7733, 0
-    ).setDepth(7);
+    ).setDepth(DEPTH.FX - 1);
   }
 
   _buildPlayer() {
@@ -403,7 +420,14 @@ export default class GameScene extends Phaser.Scene {
   // ── atmosphere & speed lines ──────────────────────────────────────────────
 
   _updateAtmosphere(pct) {
-    this.sunset.setAlpha(pct * 0.15);
+    // day -> sunset sky
+    this.skySunset.setAlpha(Phaser.Math.Clamp((pct - 0.35) / 0.5, 0, 1));
+    // shops -> decorated wedding street for the final stretch
+    const w = Phaser.Math.Clamp((pct - 0.78) / 0.08, 0, 1);
+    this.wedding.setAlpha(w);
+    this.buildings.setAlpha(1 - w);
+    // subtle warm wash
+    this.sunset.setAlpha(pct * 0.10);
   }
 
   _updateSpeedLines(delta) {
@@ -414,7 +438,7 @@ export default class GameScene extends Phaser.Scene {
         const line = this.add.rectangle(
           GAME_WIDTH + 60, Phaser.Math.Between(60, GROUND_Y - 160),
           Phaser.Math.Between(80, 170), 3, 0xffffff, 0.22
-        ).setDepth(6);
+        ).setDepth(DEPTH.FX);
         this._speedLines.push(line);
       }
     }
