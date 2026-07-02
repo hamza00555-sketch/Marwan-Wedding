@@ -1,6 +1,7 @@
 import BootScene     from './scenes/BootScene.js';
 import MenuScene     from './scenes/MenuScene.js';
 import GameScene     from './scenes/GameScene.js';
+import PauseScene    from './scenes/PauseScene.js';
 import WinScene      from './scenes/WinScene.js';
 import GameOverScene from './scenes/GameOverScene.js';
 import { GAME_WIDTH, GAME_HEIGHT, GRAVITY } from './constants.js';
@@ -21,7 +22,7 @@ const config = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
   },
-  scene: [BootScene, MenuScene, GameScene, WinScene, GameOverScene]
+  scene: [BootScene, MenuScene, GameScene, PauseScene, WinScene, GameOverScene]
 };
 
-new Phaser.Game(config);
+window.__game = new Phaser.Game(config);

@@ -1,4 +1,5 @@
-import { GAME_WIDTH, GAME_HEIGHT } from '../constants.js';
+import { GAME_WIDTH, GAME_HEIGHT, HIGHSCORE_KEY } from '../constants.js';
+import audio from '../objects/AudioEngine.js';
 
 export default class MenuScene extends Phaser.Scene {
   constructor() { super({ key: 'MenuScene' }); }
@@ -26,12 +27,21 @@ export default class MenuScene extends Phaser.Scene {
     this.tweens.add({ targets: title, alpha: 1, y: 110, duration: 700, ease: 'Back.easeOut' });
     this.tweens.add({ targets: sub,   alpha: 1,          duration: 700, delay: 300 });
 
+    // Best score badge
+    const best = parseInt(localStorage.getItem(HIGHSCORE_KEY) || '0', 10);
+    if (best > 0) {
+      this.add.text(GAME_WIDTH / 2, 246, `🏆 أفضل نتيجة: ${best}`, {
+        fontSize: '22px', fill: '#ffe066', fontFamily: 'Arial',
+        stroke: '#000', strokeThickness: 3
+      }).setOrigin(0.5);
+    }
+
     // Player preview sprite
-    const preview = this.add.sprite(GAME_WIDTH / 2, 350, 'marwan-run').setScale(1.3);
+    const preview = this.add.sprite(GAME_WIDTH / 2, 360, 'marwan-run').setScale(1.3);
     if (this.anims.exists('player-run')) preview.play('player-run');
 
     // Start button
-    const btn = this.add.text(GAME_WIDTH / 2, 490, '← ابدأ الركض', {
+    const btn = this.add.text(GAME_WIDTH / 2, 495, '← ابدأ الركض', {
       fontSize: '34px', fill: '#1a0000', fontFamily: 'Arial',
       backgroundColor: '#FFD700',
       padding: { x: 28, y: 14 }
@@ -46,8 +56,19 @@ export default class MenuScene extends Phaser.Scene {
       this.tweens.add({ targets: btn, scaleX: 1, scaleY: 1, duration: 100 });
     });
     btn.on('pointerdown', () => {
+      audio.click();
+      audio.stopMusic();
       this.cameras.main.fadeOut(400, 0, 0, 0);
       this.time.delayedCall(420, () => this.scene.start('GameScene'));
+    });
+
+    // Mute toggle (top-right)
+    const muteBtn = this.add.text(GAME_WIDTH - 18, 14, audio.muted ? '🔇' : '🔊', {
+      fontSize: '26px', backgroundColor: '#00000055', padding: { x: 8, y: 4 }
+    }).setOrigin(1, 0).setInteractive({ useHandCursor: true });
+    muteBtn.on('pointerdown', (pointer, lx, ly, event) => {
+      event.stopPropagation();
+      muteBtn.setText(audio.toggleMuted() ? '🔇' : '🔊');
     });
 
     // Controls hint
@@ -56,10 +77,15 @@ export default class MenuScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     // Goal reminder
-    this.add.text(GAME_WIDTH / 2, 628, `اجمع 50 عملة مهر وصل لقاعة الأفراح!`, {
+    this.add.text(GAME_WIDTH / 2, 628, 'اجمع 50 عملة مهر وصل لقاعة الأفراح!  🧲🛡️💰 التقط الهدايا بالطريق', {
       fontSize: '17px', fill: '#ffd700', fontFamily: 'Arial',
       stroke: '#000', strokeThickness: 2
     }).setOrigin(0.5);
+
+    // WebAudio needs a user gesture — start the menu music on the first one
+    const startMusic = () => audio.startMusic('menu');
+    this.input.once('pointerdown', startMusic);
+    this.input.keyboard.once('keydown', startMusic);
 
     this.cameras.main.fadeIn(500);
   }

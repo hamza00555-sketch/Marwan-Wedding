@@ -40,3 +40,20 @@ export const SPAWN_MAX_MS   = 2400;
 // Coin spawning
 export const COIN_SPAWN_MIN_MS = 750;
 export const COIN_SPAWN_MAX_MS = 1700;
+export const BIG_COIN_VALUE    = 5;
+
+// Power-ups
+export const POWERUP_TYPES        = ['magnet', 'shield', 'coinbag'];
+export const POWERUP_SPAWN_MIN_MS = 9000;
+export const POWERUP_SPAWN_MAX_MS = 16000;
+export const MAGNET_DURATION_MS   = 6500;
+export const MAGNET_RADIUS        = 300;
+
+// Coin combo chain
+export const COMBO_WINDOW_MS = 1600;
+
+// Near-miss detection (px gap between hitboxes)
+export const NEAR_MISS_GAP = 44;
+
+// Scoring
+export const HIGHSCORE_KEY = 'marwan-highscore';

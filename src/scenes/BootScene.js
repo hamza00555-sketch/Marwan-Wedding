@@ -46,6 +46,12 @@ export default class BootScene extends Phaser.Scene {
     this.load.image('wedding-icon',  'assets/images/wedding-icon.png');
     this.load.spritesheet('coin', 'assets/images/coin.png',
       { frameWidth: 36, frameHeight: 36 });
+    this.load.image('coin-big', 'assets/images/coin-big.png');
+
+    // ── power-ups ─────────────────────────────────────────────────────────
+    this.load.image('powerup-magnet',  'assets/images/powerup-magnet.png');
+    this.load.image('powerup-shield',  'assets/images/powerup-shield.png');
+    this.load.image('powerup-coinbag', 'assets/images/powerup-coinbag.png');
 
     // ── scene backgrounds ─────────────────────────────────────────────────
     this.load.image('menu-bg',     'assets/images/menu-bg.png');
@@ -55,7 +61,31 @@ export default class BootScene extends Phaser.Scene {
 
   create() {
     this._createAnimations();
+    this._createParticleTextures();
     this.scene.start('MenuScene');
+  }
+
+  // small procedural textures used by the particle emitters
+  _createParticleTextures() {
+    if (!this.textures.exists('p-dot')) {
+      const g = this.make.graphics({ add: false });
+      g.fillStyle(0xffffff, 1);
+      g.fillCircle(5, 5, 5);
+      g.generateTexture('p-dot', 10, 10);
+      g.destroy();
+    }
+
+    if (!this.textures.exists('p-star')) {
+      const g = this.make.graphics({ add: false });
+      g.fillStyle(0xffffff, 1);
+      // 4-point star (diamond with pinched sides)
+      g.fillPoints([
+        { x: 7, y: 0 }, { x: 9, y: 5 }, { x: 14, y: 7 }, { x: 9, y: 9 },
+        { x: 7, y: 14 }, { x: 5, y: 9 }, { x: 0, y: 7 }, { x: 5, y: 5 }
+      ], true);
+      g.generateTexture('p-star', 14, 14);
+      g.destroy();
+    }
   }
 
   _createAnimations() {
